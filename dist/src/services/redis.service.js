@@ -9,16 +9,34 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.setKey = setKey;
-exports.getKey = getKey;
+exports.setWeatherToCache = setWeatherToCache;
+exports.getWeatherCached = getWeatherCached;
+exports.setError = setError;
 const cache_1 = require("@/config/cache");
-function setKey(key, value) {
+const constants_1 = require("@/config/constants");
+const weather_service_1 = require("./weather.service");
+function setWeatherToCache(key, value) {
     return __awaiter(this, void 0, void 0, function* () {
         return cache_1.client.set(key, value, { EX: 300 });
     });
 }
-function getKey(key) {
+function getWeatherCached(location) {
     return __awaiter(this, void 0, void 0, function* () {
-        return cache_1.client.get(key);
+        var _a;
+        const locationName = (_a = constants_1.locations.find((loc) => loc.code === location)) === null || _a === void 0 ? void 0 : _a.name;
+        if (!locationName) {
+            yield setError("Location not found");
+            throw new Error("Location not found");
+        }
+        const res = yield cache_1.client.get(locationName);
+        if (res) {
+            return JSON.parse(res);
+        }
+        return (0, weather_service_1.getWeather)(location);
+    });
+}
+function setError(error) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return cache_1.client.set(`error-${new Date().getTime()}`, error);
     });
 }

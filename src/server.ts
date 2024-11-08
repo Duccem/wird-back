@@ -1,3 +1,4 @@
+import "@/jobs/consult-weather";
 import dotenv from "dotenv";
 import express, { Express } from "express";
 import { connect } from "./config/cache";

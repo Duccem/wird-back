@@ -1,5 +1,6 @@
+import { locations } from "@/config/constants";
 import axios from "axios";
-import { getKey, setKey } from "./redis.service";
+import { setError, setWeatherToCache } from "./redis.service";
 
 export const getWeather = async (location: string): Promise<Weather> => {
   const API_KEY = process.env.API_KEY;
@@ -14,12 +15,6 @@ export const getWeather = async (location: string): Promise<Weather> => {
       throw new Error("The api request failed");
     }
 
-    const cacheData = await getKey(locationName);
-
-    if (cacheData) {
-      return JSON.parse(cacheData) as Weather;
-    }
-
     const response = await axios.get(
       `https://api.tomorrow.io/v4/weather/realtime?location=${locationName}&apikey=${API_KEY}`,
     );
@@ -28,25 +23,17 @@ export const getWeather = async (location: string): Promise<Weather> => {
       time: response.data.data.time,
       location: response.data.location,
     };
-    await setKey(locationName, JSON.stringify(data));
+    await setWeatherToCache(locationName, JSON.stringify(data));
     return data;
   } catch (error) {
     if ((error as Error).message === "The api request failed") {
       console.log("retrying api call on error");
+      await setError("The api request failed");
       return await getWeather(location);
     }
     throw error;
   }
 };
-
-const locations = [
-  { name: "Santiago de chile", code: "santiago" },
-  { name: "London", code: "london" },
-  { name: "Zurich", code: "zurich" },
-  { name: "Auckland new zeland", code: "auckland" },
-  { name: "Sidney australia", code: "sidney" },
-  { name: "Georgia usa", code: "georgia" },
-];
 
 export interface Weather {
   time: string;

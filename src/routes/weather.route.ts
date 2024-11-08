@@ -1,4 +1,4 @@
-import { getWeather } from "@/services/weather.service";
+import { getWeatherCached } from "@/services/redis.service";
 import { Router } from "express";
 
 const router = Router();
@@ -7,7 +7,7 @@ router.get("/:location", async (req, res) => {
   const { location } = req.params;
   let response;
   try {
-    response = await getWeather(location);
+    response = await getWeatherCached(location);
     res.status(200).json(response);
   } catch (error) {
     console.log(error);

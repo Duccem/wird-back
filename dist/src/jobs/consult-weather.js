@@ -8,20 +8,25 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+const constants_1 = require("@/config/constants");
 const redis_service_1 = require("@/services/redis.service");
-const express_1 = require("express");
-const router = (0, express_1.Router)();
-router.get("/:location", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { location } = req.params;
-    let response;
-    try {
-        response = yield (0, redis_service_1.getWeatherCached)(location);
-        res.status(200).json(response);
-    }
-    catch (error) {
-        console.log(error);
-        res.status(500).json({ error: "Internal server error" });
-    }
-}));
-exports.default = router;
+const weather_service_1 = require("@/services/weather.service");
+const node_cron_1 = __importDefault(require("node-cron"));
+function consultWeather() {
+    return __awaiter(this, void 0, void 0, function* () {
+        for (const location of constants_1.locations) {
+            try {
+                yield (0, weather_service_1.getWeather)(location.name);
+            }
+            catch (error) {
+                console.error(error);
+                (0, redis_service_1.setError)(error.message);
+            }
+        }
+    });
+}
+node_cron_1.default.schedule("*/5 * * * *", consultWeather);

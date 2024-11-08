@@ -9,22 +9,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const redis_service_1 = require("@/services/redis.service");
-const weather_service_1 = require("@/services/weather.service");
-const express_1 = require("express");
-const router = (0, express_1.Router)();
-router.get("/:location", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { location } = req.params;
-    let response;
-    try {
-        const key = yield (0, redis_service_1.getKey)("test");
-        console.log(key);
-        response = yield (0, weather_service_1.getWeather)(location);
-        res.status(200).json(response);
-    }
-    catch (error) {
-        console.log(error);
-        res.status(500).json({ error: "Internal server error" });
-    }
-}));
-exports.default = router;
+exports.connect = exports.client = void 0;
+const redis_1 = require("redis");
+let client;
+const connect = () => __awaiter(void 0, void 0, void 0, function* () {
+    exports.client = client = (yield (0, redis_1.createClient)()
+        .on("error", (err) => console.log("Redis Client Error", err))
+        .on("connect", () => console.log("Redis Client Connected"))
+        .connect());
+});
+exports.connect = connect;

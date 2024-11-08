@@ -31,7 +31,7 @@ const getWeather = (location) => __awaiter(void 0, void 0, void 0, function* () 
     }
     catch (error) {
         if (error.message === "The api request failed") {
-            console.log("retrying");
+            console.log("retrying api call on error");
             return yield (0, exports.getWeather)(location);
         }
         throw error;

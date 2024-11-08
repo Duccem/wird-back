@@ -1,5 +1,6 @@
 import dotenv from "dotenv";
-import express, { Express, Request, Response } from "express";
+import express, { Express } from "express";
+import weatherRouter from "./routes/weather.route";
 
 dotenv.config();
 
@@ -9,9 +10,7 @@ const app: Express = express();
 
 app.use(express.json());
 
-app.get("/", (req: Request, res: Response) => {
-  res.send("Hello World my friends");
-});
+app.use("/api/weather", weatherRouter);
 
 export async function startServer() {
   app.listen(port, () => {

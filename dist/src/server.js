@@ -15,13 +15,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.startServer = startServer;
 const dotenv_1 = __importDefault(require("dotenv"));
 const express_1 = __importDefault(require("express"));
+const weather_route_1 = __importDefault(require("./routes/weather.route"));
 dotenv_1.default.config();
 const port = process.env.PORT || 3000;
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
-app.get("/", (req, res) => {
-    res.send("Hello World my friends");
-});
+app.use("/api/weather", weather_route_1.default);
 function startServer() {
     return __awaiter(this, void 0, void 0, function* () {
         app.listen(port, () => {

@@ -19,20 +19,22 @@ const getWeather = (location) => __awaiter(void 0, void 0, void 0, function* () 
     const API_KEY = process.env.API_KEY;
     try {
         const locationName = (_a = locations.find((loc) => loc.code === location)) === null || _a === void 0 ? void 0 : _a.name;
-        console.log(locationName);
         if (!locationName) {
             throw new Error("Location not found");
         }
-        // if (Math.random() < 0.2) {
-        //   throw new Error("The api request failed");
-        // }
+        if (Math.random() < 0.2) {
+            throw new Error("The api request failed");
+        }
         const response = yield axios_1.default.get(`https://api.tomorrow.io/v4/weather/realtime?location=${locationName}&apikey=${API_KEY}`);
         const data = Object.assign(Object.assign({}, response.data.data.values), { time: response.data.data.time, location: response.data.location });
         return data;
     }
     catch (error) {
-        console.error(error);
-        throw new Error("Error while fetching weather data");
+        if (error.message === "The api request failed") {
+            console.log("retrying");
+            return yield (0, exports.getWeather)(location);
+        }
+        throw error;
     }
 });
 exports.getWeather = getWeather;

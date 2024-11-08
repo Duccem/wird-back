@@ -23,8 +23,11 @@ export const getWeather = async (location: string): Promise<Weather> => {
     };
     return data;
   } catch (error) {
-    console.error(error);
-    throw new Error("Error while fetching weather data");
+    if ((error as Error).message === "The api request failed") {
+      console.log("retrying api call on error");
+      return await getWeather(location);
+    }
+    throw error;
   }
 };
 

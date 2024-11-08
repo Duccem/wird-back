@@ -14,7 +14,14 @@ const express_1 = require("express");
 const router = (0, express_1.Router)();
 router.get("/:location", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { location } = req.params;
-    const response = yield (0, weather_service_1.getWeather)(location);
-    res.status(200).json(response);
+    let response;
+    try {
+        response = yield (0, weather_service_1.getWeather)(location);
+        res.status(200).json(response);
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500).json({ error: "Internal server error" });
+    }
 }));
 exports.default = router;

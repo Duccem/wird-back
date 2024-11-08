@@ -14,7 +14,7 @@ exports.getKey = getKey;
 const cache_1 = require("@/config/cache");
 function setKey(key, value) {
     return __awaiter(this, void 0, void 0, function* () {
-        return cache_1.client.set(key, value);
+        return cache_1.client.set(key, value, { EX: 300 });
     });
 }
 function getKey(key) {

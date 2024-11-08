@@ -13,7 +13,9 @@ exports.connect = exports.client = void 0;
 const redis_1 = require("redis");
 let client;
 const connect = () => __awaiter(void 0, void 0, void 0, function* () {
-    exports.client = client = (yield (0, redis_1.createClient)()
+    exports.client = client = (yield (0, redis_1.createClient)({
+        url: process.env.REDIS_URL || "redis://localhost:6379",
+    })
         .on("error", (err) => console.log("Redis Client Error", err))
         .on("connect", () => console.log("Redis Client Connected"))
         .connect());

@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getWeather = void 0;
 const axios_1 = __importDefault(require("axios"));
+const redis_service_1 = require("./redis.service");
 const getWeather = (location) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     const API_KEY = process.env.API_KEY;
@@ -25,8 +26,13 @@ const getWeather = (location) => __awaiter(void 0, void 0, void 0, function* () 
         if (Math.random() < 0.2) {
             throw new Error("The api request failed");
         }
+        const cacheData = yield (0, redis_service_1.getKey)(locationName);
+        if (cacheData) {
+            return JSON.parse(cacheData);
+        }
         const response = yield axios_1.default.get(`https://api.tomorrow.io/v4/weather/realtime?location=${locationName}&apikey=${API_KEY}`);
         const data = Object.assign(Object.assign({}, response.data.data.values), { time: response.data.data.time, location: response.data.location });
+        yield (0, redis_service_1.setKey)(locationName, JSON.stringify(data));
         return data;
     }
     catch (error) {

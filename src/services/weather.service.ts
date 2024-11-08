@@ -1,4 +1,5 @@
 import axios from "axios";
+import { getKey, setKey } from "./redis.service";
 
 export const getWeather = async (location: string): Promise<Weather> => {
   const API_KEY = process.env.API_KEY;
@@ -13,6 +14,12 @@ export const getWeather = async (location: string): Promise<Weather> => {
       throw new Error("The api request failed");
     }
 
+    const cacheData = await getKey(locationName);
+
+    if (cacheData) {
+      return JSON.parse(cacheData) as Weather;
+    }
+
     const response = await axios.get(
       `https://api.tomorrow.io/v4/weather/realtime?location=${locationName}&apikey=${API_KEY}`,
     );
@@ -21,6 +28,7 @@ export const getWeather = async (location: string): Promise<Weather> => {
       time: response.data.data.time,
       location: response.data.location,
     };
+    await setKey(locationName, JSON.stringify(data));
     return data;
   } catch (error) {
     if ((error as Error).message === "The api request failed") {

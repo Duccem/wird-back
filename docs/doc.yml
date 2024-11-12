@@ -1,0 +1,136 @@
+openapi: 3.0.0
+info:
+  title: Wird Test Backend API - José Véliz
+  version: 0.1.0
+  description: This API provides weather data for a given location.
+
+servers:
+  - url: https://wird-back.onrender.com
+    description: Production server
+  - url: http://localhost:4000
+    description: Development server
+
+paths:
+  /api/weather/{location}:
+    get:
+      summary: Retrieve weather data
+      parameters:
+        - name: location
+          in: path
+          description: The location to retrieve weather data for
+          required: true
+          schema:
+            type: string
+          example: "Sydney"
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Weather'
+
+components:
+  schemas:
+    Weather:
+      type: object
+      properties:
+        cloudBase:
+          type: number
+          format: float
+          example: 0.44
+        cloudCeiling:
+          type: number
+          format: float
+          nullable: true
+          example: null
+        cloudCover:
+          type: integer
+          example: 43
+        dewPoint:
+          type: number
+          format: float
+          example: 16.69
+        freezingRainIntensity:
+          type: number
+          format: float
+          example: 0
+        humidity:
+          type: integer
+          example: 80
+        precipitationProbability:
+          type: integer
+          example: 0
+        pressureSurfaceLevel:
+          type: number
+          format: float
+          example: 1012.2
+        rainIntensity:
+          type: number
+          format: float
+          example: 0
+        sleetIntensity:
+          type: number
+          format: float
+          example: 0
+        snowIntensity:
+          type: number
+          format: float
+          example: 0
+        temperature:
+          type: number
+          format: float
+          example: 20.13
+        temperatureApparent:
+          type: number
+          format: float
+          example: 20.13
+        uvHealthConcern:
+          type: integer
+          example: 1
+        uvIndex:
+          type: integer
+          example: 2
+        visibility:
+          type: number
+          format: float
+          example: 11.71
+        weatherCode:
+          type: integer
+          example: 1101
+        windDirection:
+          type: number
+          format: float
+          example: 26.81
+        windGust:
+          type: number
+          format: float
+          example: 4.19
+        windSpeed:
+          type: number
+          format: float
+          example: 1.31
+        time:
+          type: string
+          format: date-time
+          example: "2024-11-12T21:59:00Z"
+        location:
+          $ref: '#/components/schemas/Location'
+
+    Location:
+      type: object
+      properties:
+        lat:
+          type: number
+          format: float
+          example: -33.869842529296875
+        lon:
+          type: number
+          format: float
+          example: 151.20828247070312
+        name:
+          type: string
+          example: "Sydney, Council of the City of Sydney, New South Wales, Australia"
+        type:
+          type: string
+          example: "administrative"

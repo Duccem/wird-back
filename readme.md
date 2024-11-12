@@ -38,4 +38,12 @@ npm install --save
 npm run dev
 ```
 
+## Docs
+
+La documentacion openapi se encuentra en la url
+
+```
+/api
+```
+
 Author: @Duccem
